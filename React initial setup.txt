@@ -1,0 +1,109 @@
+give me command to install react-redux 
+ChatGPT
+To install react-redux, you typically need to use the npm (Node Package Manager) or yarn, depending on your preference. First, ensure you have Node.js and npm installed. If you're using create-react-app, you likely already have them.
+
+Using npm:
+
+css
+Copy code
+npm install react-redux redux --save
+Using yarn:
+
+csharp
+Copy code
+yarn add react-redux redux
+Both of these commands will install the react-redux and redux libraries. Remember that react-redux is just the integration layer between React and Redux, so you also need to install the core redux library alongside it.
+
+Great. Next steps please configure Store: Create a store for the application to store first name, last name, email and message.
+ChatGPT
+Certainly! To configure a store for the application to store first name, last name, email, and message, follow the steps below:
+
+Setting up Action Types:
+
+First, let's define some action types. These are constants that represent the types of actions that can be taken in our app.
+
+actionTypes.js:
+
+javascript
+Copy code
+export const UPDATE_USER_DETAILS = "UPDATE_USER_DETAILS";
+Setting up Actions:
+
+Next, let's define the action creators. These are functions that return actions.
+
+actions.js:
+
+javascript
+Copy code
+import { UPDATE_USER_DETAILS } from './actionTypes';
+
+export const updateUserDetails = (payload) => ({
+  type: UPDATE_USER_DETAILS,
+  payload
+});
+Setting up Reducers:
+
+Now, we'll define a reducer to handle the actions and update the state.
+
+reducer.js:
+
+javascript
+Copy code
+import { UPDATE_USER_DETAILS } from './actionTypes';
+
+const initialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  message: ""
+};
+
+const userReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case UPDATE_USER_DETAILS:
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+};
+
+export default userReducer;
+Setting up the Store:
+
+Here's how you can configure the store:
+
+store.js:
+
+javascript
+Copy code
+import { createStore } from 'redux';
+import userReducer from './reducer';
+
+const store = createStore(
+  userReducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__() // This line is to enable the Redux DevTools extension in the browser.
+);
+
+export default store;
+Integrate Redux with React:
+
+Finally, you'll want to wrap your top-level React component with the Provider component from react-redux, and pass your store to it.
+
+App.js (or where your top-level component is defined):
+
+javascript
+Copy code
+import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store';
+
+function App() {
+  return (
+    <Provider store={store}>
+      {/* Your components go here */}
+    </Provider>
+  );
+}
+
+export default App;
+Now, you have a basic Redux setup that allows you to manage user details (first name, last name, email, and message) in the store. To modify these details, you'll dispatch the updateUserDetails action with the desired payload.
