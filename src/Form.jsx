@@ -52,7 +52,7 @@ console.log(store)
 
   return (
     <form onSubmit={handleSubmit} 
-    style={{border: "1px solid red", display: "flex", flexDirection: "column", justifyContent: "space-between",  alignItems: "center", height: "300px"}}>
+    style={{ display: "flex", flexDirection: "column", justifyContent: "space-between",  alignItems: "center", height: "300px"}}>
       <input  style={{ width: "300px"}} type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" />
       {errors.firstName && <span>{errors.firstName}</span>}
       <input  style={{ width: "300px"}} type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" />
