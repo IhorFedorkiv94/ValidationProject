@@ -1,10 +1,12 @@
 import  { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserDetails } from './actions';
+import {isLength} from "validator"
+
+// console.log(validator.isLength("jdncjkcsdcklmsdclkmsdlkcdnkjndc" , { min: 10 , max: 20}))
 
 const Form = () => {
 const store = useSelector(state => (state))
-
 console.log(store)
 
   const dispatch = useDispatch();
@@ -30,7 +32,7 @@ console.log(store)
     tempErrors.firstName = formData.firstName ? '' : 'This field is required.';
     tempErrors.lastName = formData.lastName ? '' : 'This field is required.';
     tempErrors.email = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email) ? '' : 'Email is not valid.';
-    tempErrors.message = formData.message ? '' : 'This field is required.';
+    tempErrors.message =  isLength(formData.message , { min: 10}) ? '' : 'This field is required.'; 
     setErrors(tempErrors);
 
     return Object.values(tempErrors).every(x => x === '');
@@ -38,6 +40,7 @@ console.log(store)
 
   const handleSubmit = (e) => {
     e.preventDefault();
+   
     if (validate()) {
       dispatch(updateUserDetails(formData));
       setFormData({
@@ -61,7 +64,7 @@ console.log(store)
       {errors.email && <span>{errors.email}</span>}
       <textarea  style={{ width: "300px"}} name="message" value={formData.message} onChange={handleChange} placeholder="Message" />
       {errors.message && <span>{errors.message}</span>}
-      <button type="submit" disabled={Object.values(errors).some(x => x)}>Submit</button>
+      <button type="submit" >Submit</button>
     </form>
   );
 };

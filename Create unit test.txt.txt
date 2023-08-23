@@ -1,0 +1,105 @@
+I have react app with redux store. Store have following structure:  const initialState = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  message: ""
+};
+
+I have component Form, with firstName inputs, lastName input, email input, message input. And submit button which validate a field and ufter that set values into redux store.
+
+	Create Unit tests for the form and validation behavior. 
+•	The `first_name` and `last_name` fields should be validated on the presents of information
+•	The `email` field should be validated on the correctness of the email entered
+•	The `message` field should be validated on the length of the message (minimum 10 characters)
+
+for testing please use React test lib. I dont have setup this lib on project. Please add too
+ChatGPT
+Alright, let's break this down step by step:
+
+Setup React Testing Library:
+Before we can write any tests, we need to set up the React Testing Library.
+
+First, install the necessary packages:
+
+scss
+Copy code
+npm install --save @testing-library/react @testing-library/jest-dom @testing-library/user-event
+Update your jest.config.js or jest section of package.json:
+
+javascript
+Copy code
+setupFilesAfterEnv: ["@testing-library/jest-dom/extend-expect"]
+Unit Tests for the Form Component:
+
+Here's a basic outline for the tests we'll be creating for the Form component:
+
+javascript
+Copy code
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import reducer from './path-to-your-reducer'; // replace with the path to your reducer
+import Form from './Form'; // replace with the path to your Form component
+
+const renderWithRedux = (component, { initialState, store = createStore(reducer, initialState) } = {}) => {
+   return {
+      ...render(<Provider store={store}>{component}</Provider>),
+      store,
+   };
+};
+
+describe('Form Component', () => {
+   test('validates first_name and last_name fields', () => {
+      renderWithRedux(<Form />);
+
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+
+      userEvent.click(submitButton);
+      
+      expect(screen.getByText(/first name is required/i)).toBeInTheDocument();
+      expect(screen.getByText(/last name is required/i)).toBeInTheDocument();
+   });
+
+   test('validates email field', () => {
+      renderWithRedux(<Form />);
+      
+      const emailInput = screen.getByLabelText(/email/i);
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+
+      userEvent.type(emailInput, 'invalid-email');
+      userEvent.click(submitButton);
+
+      expect(screen.getByText(/invalid email format/i)).toBeInTheDocument();
+   });
+
+   test('validates message field for length', () => {
+      renderWithRedux(<Form />);
+      
+      const messageInput = screen.getByLabelText(/message/i);
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+
+      userEvent.type(messageInput, 'short');
+      userEvent.click(submitButton);
+
+      expect(screen.getByText(/message should be at least 10 characters long/i)).toBeInTheDocument();
+   });
+});
+In this example:
+
+We have a helper function renderWithRedux to render components wrapped with the Redux provider.
+We then have individual tests for each validation case.
+Note: This example assumes that your form displays error messages when validation fails. Adjust the expected messages (getByText(...)) to match what your Form component displays.
+
+Validation Logic:
+The tests above will fail if your component doesn't have the required validation logic. Ensure your component's validation logic aligns with the expectations in the tests.
+
+This is a very basic example and might need adjustments based on your Form component's actual implementation. It's recommended to run tests regularly during development to ensure they pass and adjust them as necessary.
+
+nit jest for vite react app 
+ChatGPT
+
+2 / 2
+
+As of my knowledge cut-off date in September 2021, Vite uses a different setup and some different tooling compared to traditional Create React App projects, so setting up Jest for a Vite React app requires
