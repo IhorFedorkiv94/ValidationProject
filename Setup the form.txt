@@ -1,0 +1,115 @@
+I have react app. I have react-redux store setup. I need to create: 
+-	Create a form component(s) so user can enter the next fields: First Name, Last Name, Email and Message
+-	Add validation functionality for all the fields
+-	Add a submit button so when user clicks on it the app will add entered values to the store (user should not be able to click submit button when at least one field is not valid)
+ChatGPT
+Sure! Let's break down the steps you'll need to follow in order to achieve what you've described.
+
+1. Create a Reducer to Handle Form Data
+You'll want to start by creating a reducer to handle the form data. Here's a simple example that would go into your reducers file:
+
+javascript
+Copy code
+const initialState = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  message: ''
+};
+
+export const formReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SUBMIT_FORM':
+      return {
+        ...state,
+        ...action.payload
+      };
+    default:
+      return state;
+  }
+};
+2. Create Action to Submit Form
+Create an action that will be used to dispatch the entered values to the store:
+
+javascript
+Copy code
+export const submitForm = (formData) => {
+  return {
+    type: 'SUBMIT_FORM',
+    payload: formData
+  };
+};
+3. Form Component
+Next, you can create a React component for the form itself, using controlled components to manage the state of each input and adding validation as needed.
+
+Here's an example that includes validation:
+
+javascript
+Copy code
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { submitForm } from './actions';
+
+const Form = () => {
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
+  const validate = () => {
+    let tempErrors = {};
+    tempErrors.firstName = formData.firstName ? '' : 'This field is required.';
+    tempErrors.lastName = formData.lastName ? '' : 'This field is required.';
+    tempErrors.email = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(formData.email) ? '' : 'Email is not valid.';
+    tempErrors.message = formData.message ? '' : 'This field is required.';
+    setErrors(tempErrors);
+
+    return Object.values(tempErrors).every(x => x === '');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (validate()) {
+      dispatch(submitForm(formData));
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        message: ''
+      });
+      alert('Form submitted successfully!');
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} placeholder="First Name" />
+      {errors.firstName && <span>{errors.firstName}</span>}
+      <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} placeholder="Last Name" />
+      {errors.lastName && <span>{errors.lastName}</span>}
+      <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Email" />
+      {errors.email && <span>{errors.email}</span>}
+      <textarea name="message" value={formData.message} onChange={handleChange} placeholder="Message" />
+      {errors.message && <span>{errors.message}</span>}
+      <button type="submit" disabled={Object.values(errors).some(x => x)}>Submit</button>
+    </form>
+  );
+};
+
+export default Form;
+This code snippet includes all the functionality you need to handle the form, validate the inputs, and submit the values to the Redux store. It also disables the submit button when there are validation errors.
+
+Don't forget to add the reducer to your store and make sure everything is connected properly!
